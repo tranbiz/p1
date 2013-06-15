@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+
+    <script src='/socket.io/socket.io.js'></script>
+    <script src='http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.10.1.min.js'></script>
+
+    <script>
+        var socket = io.connect(null, { transports: ['xhr-polling'] });
+        $(document).ready(function() {
+        $('#send').click(function() {
+          socket.emit('message', $('#content').val());
+        });
+
+        $(document).mousemove(function(e) {
+          socket.emit('cursor', { x: e.pageX, y: e.pageY });
+        });
+
+        socket.on('message', function(data) {
+          $('#messages').append('<li>' + data + '</li>');
+        });
+
+        socket.on('cursor', function(data) {
+          var $cursor = $('#cursor-' + data.id);
+
+          if($cursor.length) {
+            $cursor.css('left', data.x);
+            $cursor.css('top', data.y);
+          } else 
+            {
+            $('#cursors').append('<div id="cursor-' + data.id + '"  style="position: absolute; cursor: default" > <img src="images/images.jpeg" height="280" width="180" >  </div>');
+            }
+        });
+        });
+    </script>
+
+  </head>
+
+  <body>
+    <h1><%= title %></h1>
+
+    <p>Welcome to <%= title %></p>
+
+    <div id="cursors"></div>
+
+  </body>
+</html>
